@@ -30,9 +30,12 @@ class User extends Model
         if (empty($data['last_name']) || !preg_match('/[a-zA-Z]+$/', $data['last_name'])) {
             $this->errors['last_name'] = 'Only letters allowed in the last name';
         }
-        // check for email
         if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $this->errors['email'] = 'Email is not valid';
+        }
+        // check for email
+        if ($this->where('email', $data['email'])) {
+            $this->errors['email'] = 'Email is already in use';
         }
         // check for gender
         $genders = ['female', 'male'];
@@ -48,8 +51,8 @@ class User extends Model
             $this->errors['password'] = 'The passwords do not match';
         }
         // check for password length
-        if (strlen($data['password']) < 8) {
-            $this->errors['password'] = 'The passwords must be at least 8 characters long';
+        if (strlen($data['password']) < 5) {
+            $this->errors['password'] = 'The passwords must be at least 5 characters long';
         }
 
         if (count($this->errors) == 0) {
@@ -60,9 +63,11 @@ class User extends Model
 
     public function make_user_id($data)
     {
-        $data['user_id'] = $this->random_string(60);
+        $data['user_id'] = random_string(60);
         return $data;
     }
+
+
 
     public function make_school_id($data)
     {
@@ -77,17 +82,5 @@ class User extends Model
     {
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         return $data;
-    }
-
-    private function random_string($length)
-    {
-        $array = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-        $text = "";
-
-        for ($x = 0; $x < $length; $x++) {
-            $random = rand(0, 61);
-            $text .= $array[$random];
-        }
-        return $text;
     }
 }

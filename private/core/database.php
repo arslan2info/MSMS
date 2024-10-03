@@ -18,19 +18,30 @@ class Database
         $con = $this->connect();
         $stm = $con->prepare($query);
 
+        $result = false;
+
         if ($stm) {
             $check = $stm->execute($data);
             if ($check) {
                 if ($data_type == "object") {
-                    $data = $stm->fetchAll(PDO::FETCH_OBJ);
+                    $result = $stm->fetchAll(PDO::FETCH_OBJ);
                 } else {
-                    $data = $stm->fetchAll(PDO::FETCH_ASSOC);
-                }
-
-                if (is_array($data) && count($data) > 0) {
-                    return $data;
+                    $result = $stm->fetchAll(PDO::FETCH_ASSOC);
                 }
             }
+        }
+
+        // run functions after selecting
+        if (is_array($result)) {
+            if (property_exists($this, 'afterSelect')) {
+                foreach ($this->afterSelect as $func) {
+                    $result =  $this->$func($result);
+                }
+            }
+        }
+
+        if (is_array($result) && count($result) > 0) {
+            return $result;
         }
         return false;
     }

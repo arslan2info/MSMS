@@ -15,7 +15,12 @@ class App
         if (file_exists("../private/controllers/" . $URL[0] . ".php")) {
             $this->controller = ucfirst($URL[0]);
             unset($URL[0]);
+        } else {
+
+            echo "<center><h1>Controller not found</h1></center>";
+            die;
         }
+
         require "../private/controllers/" . $this->controller . ".php";
         $this->controller = new $this->controller();
 

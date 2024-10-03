@@ -15,21 +15,68 @@ class Model extends Database
         };
     }
 
-    public function where($column, $value)
+    public function where($column, $value, $orderby = 'desc')
     {
         $column = addslashes($column);
-        $query = "SELECT * FROM $this->table WHERE $column = :value";
-        return $this->query(
+        $query = "SELECT * FROM $this->table WHERE $column = :value order by id $orderby";
+        $data = $this->query(
             $query,
             [
                 'value' => $value,
             ]
         );
+
+        // run functions after selecting
+        if (is_array($data)) {
+            if (property_exists($this, 'afterSelect')) {
+                foreach ($this->afterSelect as $func) {
+                    $data =  $this->$func($data);
+                }
+            }
+        }
+
+        return $data;
     }
-    public function findAll()
+    public function first($column, $value, $orderby = 'desc')
     {
-        $query = "SELECT * FROM $this->table";
-        return $this->query($query);
+        $column = addslashes($column);
+        $query = "SELECT * FROM $this->table WHERE $column = :value order by id $orderby";
+        $data = $this->query(
+            $query,
+            [
+                'value' => $value,
+            ]
+        );
+
+        // run functions after selecting
+        if (is_array($data)) {
+            if (property_exists($this, 'afterSelect')) {
+                foreach ($this->afterSelect as $func) {
+                    $data =  $this->$func($data);
+                }
+            }
+            return $data[0];
+        }
+        // if (is_array($data)) {
+        //     $data = $data[0]
+        // }
+
+        return $data;
+    }
+    public function findAll($order = "desc")
+    {
+        $query = "SELECT * FROM $this->table ORDER BY id $order";
+        $data = $this->query($query);
+
+        // run function after select
+        if (is_array($data)) {
+            if (property_exists($this, 'afterSelect')) {
+                foreach ($this->afterSelect as $func) {
+                    $data = $this->$func($data);
+                }
+            }
+        }
+        return $data;
     }
 
     public function insert($data)
@@ -69,7 +116,6 @@ class Model extends Database
 
         $data['id'] = $id;
         $query = "update $this->table set $str where id = :id";
-        echo $query;
         return $this->query($query, $data);
     }
 

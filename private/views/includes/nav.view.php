@@ -12,9 +12,9 @@
     }
 </style>
 <nav class="navbar navbar-expand-lg navbar-light bg-light p-2">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="<?= ROOT ?>">
         <img src="<?= ROOT ?>/assets/logo.png" class="border border-primary  rounded-circle" style="width:50px;" alt="">
-        FPSchool
+        <?= Auth::getSchool_name() ?>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -24,9 +24,24 @@
             <li class="nav-item active">
                 <a class="nav-link active" href="<?= ROOT ?>">DASHBOARD </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?= ROOT ?>/users">USERS</a>
-            </li>
+            <?php if (Auth::access('super_admin')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= ROOT ?>/schools">SCHOOLS</a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (Auth::access('admin')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= ROOT ?>/users">STAFF</a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (Auth::access('reception')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= ROOT ?>/students">STUDENTS</a>
+                </li>
+            <?php endif; ?>
+
             <li class="nav-item">
                 <a class="nav-link" href="<?= ROOT ?>/classes">CLASSES</a>
             </li>
@@ -36,19 +51,18 @@
         </ul>
 
         <ul class="navbar-nav ms-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    USER
+            <li class="nav-item dropdown has-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <?= Auth::getFirst_name() ?>
                 </a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="<?= ROOT ?>/profile">Profile</a>
                     <a class="dropdown-item" href="<?= ROOT ?>">Dashboard</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="<?= ROOT ?>logout">Logout</a>
+                    <a class="dropdown-item" href="<?= ROOT ?>/logout">Logout</a>
                 </div>
             </li>
-
-
         </ul>
+
     </div>
 </nav>
