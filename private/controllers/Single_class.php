@@ -20,6 +20,10 @@ class Single_class extends Controller
             $crumbs[] = [$row->class, ""];
         }
 
+        $limit = 10;
+        $pager = new Pager($limit);
+        $offset = $pager->offset;
+
         $page_tab = isset($_GET['tab']) ? $_GET['tab'] : 'lecturers';
         $lect = new Lecturers_model();
 
@@ -28,23 +32,24 @@ class Single_class extends Controller
         if ($page_tab == 'lecturers') {
 
             // display lecturers
-            $query = "SELECT * FROM class_lecturers WHERE class_id = :class_id && disabled = 0 ORDER BY id DESC";
+            $query = "SELECT * FROM class_lecturers WHERE class_id = :class_id && disabled = 0 ORDER BY id DESC LIMIT $limit OFFSET $offset";
             $lecturers = $lect->query($query, ['class_id' => $id]);
             $data['lecturers'] = $lecturers;
         } else
         if ($page_tab == 'students') {
 
             // display students
-            $query = "SELECT * FROM class_students WHERE class_id = :class_id && disabled = 0 ORDER BY id DESC";
+            $query = "SELECT * FROM class_students WHERE class_id = :class_id && disabled = 0 ORDER BY id DESC LIMIT $limit OFFSET $offset";
             $students = $lect->query($query, ['class_id' => $id]);
             $data['students'] = $students;
         }
 
-        $data['row'] = $row;
-        $data['crumbs']  = $crumbs;
-        $data['page_tab']     = $page_tab;
-        $data['results'] = $results;
-        $data['errors'] = $errors;
+        $data['row']        = $row;
+        $data['crumbs']     = $crumbs;
+        $data['page_tab']   = $page_tab;
+        $data['results']    = $results;
+        $data['errors']     = $errors;
+        $data['pager']      = $pager;
 
         $this->view('single-class', $data);
     }
@@ -90,9 +95,9 @@ class Single_class extends Controller
                 if (isset($_POST['selected'])) {
 
                     // add lecturer
-                    $query = 'select id from class_lecturers where user_id = :user_id && class_id = :class_id && disabled = 0 limit 1';
+                    $query = 'select disabled,id from class_lecturers where user_id = :user_id && class_id = :class_id limit 1';
 
-                    if (!$lect->query($query, [
+                    if (!$check = $lect->query($query, [
                         'user_id' => $_POST['selected'],
                         'class_id' => $id,
                     ])) {
@@ -100,14 +105,27 @@ class Single_class extends Controller
                         $arr = array();
                         $arr['user_id'] = $_POST['selected'];
                         $arr['class_id'] = $id;
-                        $arr['disabled'] = '0';
+                        $arr['disabled'] = 0;
                         $arr['date'] = date('Y-m-d H:i:s');
 
                         $lect->insert($arr);
 
                         $this->redirect('single_class/' . $id . "?tab=lecturers");
                     } else {
-                        $errors[] = 'That lecturer already belongs to this class';
+                        // check if user is active
+                        if (isset($check[0]->disabled)) {
+                            if ($check[0]->disabled) {
+                                $arr = array();
+                                $arr['disabled']    = 0;
+                                $lect->update($check[0]->id, $arr);
+
+                                $this->redirect('single_class/' . $id . "?tab=lecturers");
+                            } else {
+                                $errors[] = 'That lecturer already belongs to this class';
+                            }
+                        } else {
+                            $errors[] = 'That lecturer already belongs to this class';
+                        }
                     }
                 }
             }
@@ -232,9 +250,9 @@ class Single_class extends Controller
                 if (isset($_POST['selected'])) {
 
                     // add student
-                    $query = 'select id from class_students where user_id = :user_id && class_id = :class_id && disabled = 0 limit 1';
+                    $query = "SELECT disabled, id FROM class_students WHERE user_id = :user_id && class_id = :class_id LIMIT 1";
 
-                    if (!$stud->query($query, [
+                    if (!$check = $stud->query($query, [
                         'user_id' => $_POST['selected'],
                         'class_id' => $id,
                     ])) {
@@ -249,7 +267,19 @@ class Single_class extends Controller
 
                         $this->redirect('single_class/' . $id . "?tab=students");
                     } else {
-                        $errors[] = 'That student already belongs to this class';
+                        if (isset($check[0]->disabled)) {
+                            if ($check[0]->disabled) {
+                                $arr = array();
+                                $arr['disabled']    = 0;
+                                $stud->update($check[0]->id, $arr);
+
+                                $this->redirect('single_class/' . $id . "?tab=students");
+                            } else {
+                                $errors[] = 'That student already belongs to this class';
+                            }
+                        } else {
+                            $errors[] = 'That student already belongs to this class';
+                        }
                     }
                 }
             }

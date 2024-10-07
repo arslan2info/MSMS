@@ -16,15 +16,34 @@ class Classes extends Controller
         $school_id = Auth::getSchool_id();
 
         if (Auth::access('admin')) {
-            $data = $classes->query("SELECT * FROM classes WHERE school_id = :school_id ORDER BY id DESC", ['school_id' => $school_id]);
+            $query = "SELECT * FROM classes WHERE school_id = :school_id ORDER BY id DESC";
+            $arr['school_id'] = $school_id;
+
+            if (isset($_GET['find'])) {
+                $find = "%" . $_GET['find'] . "%";
+                $query = "SELECT * FROM classes WHERE school_id = :school_id && (class LIKE :find) ORDER BY id DESC";
+                $arr['find'] = $find;
+            }
+            $data = $classes->query($query, $arr);
         } else {
             $class = new Classes_model;
             $mytable = "class_students";
             if (Auth::getRank() == 'lecturer') {
                 $mytable = "class_lecturers";
             }
+
             $query = "SELECT * FROM $mytable WHERE user_id = :user_id && disabled = 0";
-            $arr['stud_classes'] = $class->query($query, ['user_id' => Auth::getUser_id()]);
+
+            $arr['user_id'] = Auth::getUser_id();
+
+            if (isset($_GET['find'])) {
+                $find = "%" . $_GET['find'] . "%";
+                $query = "SELECT classes.class, {$mytable}.* FROM $mytable JOIN classes ON classes.class_id = {$mytable}.class_id WHERE {$mytable}.user_id =:user_id && disabled = 0 && classes.class LIKE :find";
+
+                $arr['find'] = $find;
+            }
+
+            $arr['stud_classes'] = $class->query($query, $arr);
 
             $data = array();
             if ($arr['stud_classes']) {

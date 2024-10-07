@@ -8,9 +8,10 @@
         <form class="form-inline">
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-search"></i>&nbsp;</span>
+                    <button class="input-group-text" id="basic-addon1"><i class="fa fa-search"></i>&nbsp;</button>
                 </div>
-                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                <input name="find" value="<?= isset($_GET['find']) ? $_GET['find'] : ''; ?>" type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+
             </div>
         </form>
         <a href="<?= ROOT ?>/signup">
@@ -27,7 +28,7 @@
             <h4>No Staff members were found at this time</h4>
         <?php endif; ?>
     </div>
-
+    <?php $pager->display(); ?>
 </div>
 
 <?php $this->view('includes/footer') ?>
