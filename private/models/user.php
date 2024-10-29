@@ -11,14 +11,18 @@ class User extends Model
         'rank',
         'password',
         'date',
+        'image',
     ];
     protected $beforeInsert = [
         'make_user_id',
         'make_school_id',
         'hash_password',
     ];
+    protected $beforeUpdate = [
+        'hash_password',
+    ];
 
-    public function validate($data)
+    public function validate($data, $id = '')
     {
         $this->errors = array();
 
@@ -34,8 +38,14 @@ class User extends Model
             $this->errors['email'] = 'Email is not valid';
         }
         // check for email
-        if ($this->where('email', $data['email'])) {
-            $this->errors['email'] = 'Email is already in use';
+        if (trim($id) == "") {
+            if ($this->where('email', $data['email'])) {
+                $this->errors['email'] = 'Email is already in use';
+            }
+        } else {
+            if ($this->query("SELECT email FROM $this->table WHERE email = :email && user_id != :id", ['email' => $data['email'], 'id' => $id])) {
+                $this->errors['email'] = 'That email is already in use';
+            }
         }
         // check for gender
         $genders = ['female', 'male'];
@@ -47,12 +57,14 @@ class User extends Model
             $this->errors['rank'] = 'Rank is not valid';
         }
         // check for password
-        if (empty($data['password']) || $data['password'] != $data['password2']) {
-            $this->errors['password'] = 'The passwords do not match';
-        }
-        // check for password length
-        if (strlen($data['password']) < 5) {
-            $this->errors['password'] = 'The passwords must be at least 5 characters long';
+        if (isset($data['password'])) {
+            if (empty($data['password']) || $data['password'] !== $data['password2']) {
+                $this->errors['password'] = 'The passwords do not match';
+            }
+            // check for password length
+            if (strlen($data['password']) < 5) {
+                $this->errors['password'] = 'The passwords must be at least 5 characters long';
+            }
         }
 
         if (count($this->errors) == 0) {
@@ -80,7 +92,10 @@ class User extends Model
 
     public function hash_password($data)
     {
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        if (isset($data['password'])) {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
+
         return $data;
     }
 }

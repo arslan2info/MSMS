@@ -3,7 +3,7 @@
     <table class="table table-striped table-hover">
         <tr>
             <th></th>
-            <th>Class Name</th>
+            <th>Test Name</th>
             <th>Created by</th>
             <th>Date</th>
             <th>
@@ -14,7 +14,7 @@
             <?php foreach ($rows as $row): ?>
                 <tr>
                     <td>
-                        <a href="<?= ROOT ?>/single_class/<?= esc($row->class_id) ?>">
+                        <a href="<?= ROOT ?>/test/<?= esc($row->class_id) ?>">
                             <button class="btn btm-sm btn-primary"> <i class="fa fa-chevron-right"></i></button>
                         </a>
                     </td>
@@ -23,10 +23,10 @@
                     <td><?= get_date($row->date) ?></td>
                     <td>
                         <?php if (Auth::access('lecturer')): ?>
-                            <a href="<?= ROOT ?>/classes/edit/<?= $row->id ?>">
+                            <a href="<?= ROOT ?>/tests/edit/<?= $row->id ?>">
                                 <button class="btn-sm btn btn-info text-white"><i class="fa fa-edit"></i></button>
                             </a>
-                            <a href="<?= ROOT ?>/classes/delete/<?= $row->id ?>">
+                            <a href="<?= ROOT ?>/tests/delete/<?= $row->id ?>">
                                 <button class="btn-sm btn btn-danger"><i class="fa fa-trash-alt"></i></button>
                             </a>
                         <?php endif; ?>
@@ -37,7 +37,7 @@
         <?php else: ?>
             <tr>
                 <td colspan="5">
-                    <center>No classes were found at this time</center>
+                    <center>No tests were found at this time</center>
                 </td>
             </tr>
         <?php endif; ?>

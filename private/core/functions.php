@@ -53,6 +53,10 @@ function get_image($image, $gender = "male")
         if ($gender == "male") {
             $image = ASSETS . "/male.png";
         }
+    } else {
+        // $imageClass = new Image();
+        // $image = ROOT . "/" . $imageClass->profile_thumb($image);
+        $image = ROOT . "/" . $image;
     }
 
     return $image;

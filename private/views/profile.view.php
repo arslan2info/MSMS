@@ -11,6 +11,17 @@
             <div class="col-sm-4 col-md-3">
                 <img src="<?= $image ?>" class="border border-primary d-block mx-auto rounded-circle" style="width: 150px; height: 150px;" alt="">
                 <h3 class="text-center"><?= esc($row->first_name) ?> <?= esc($row->last_name) ?></h3>
+                <br>
+                <?php if (Auth::access('admin') || (Auth::access('reception') && $row->rank == "student")): ?>
+                    <div class="text-center">
+                        <a href="<?= ROOT ?>/profile/edit/<?= $row->user_id ?>">
+                            <button class="btn-sm btn btn-success">Edit</button>
+                        </a>
+                        <a href="<?= ROOT ?>/profile/delete/<?= $row->user_id ?>">
+                            <button class="btn-sm btn btn-danger">Delete</button>
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class=" col-sm-8 col-md-9 bg-light p-2">
                 <table class="table table-hover table-striped table-bordered">

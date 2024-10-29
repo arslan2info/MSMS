@@ -1,8 +1,9 @@
 <?php $this->view('includes/header') ?>
 
 <div class="container-fluid">
-    <div class="p-4 mx-auto shadow rounded" style="margin-top: 50px; width: 100%; max-width: 340px;">
-        <form action="" method="post">
+
+    <form method="post">
+        <div class="p-4 mx-auto shadow rounded" style="margin-top: 50px; width: 100%; max-width: 340px;">
             <h2 class="text-center">Fixers Private School</h2>
             <img src="<?= ROOT ?>/assets/logo.png" class="border border-primary d-block mx-auto rounded-circle" style="width:150px;" alt="">
             <h3>Add User</h3>
@@ -58,9 +59,8 @@
                     <button type="button" class="btn btn-danger">Cancel</button>
                 </a>
             <?php endif; ?>
-        </form>
-
-    </div>
+        </div>
+    </form>
 </div>
 
 <?php $this->view('includes/footer') ?>
