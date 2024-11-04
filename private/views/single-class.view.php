@@ -55,6 +55,10 @@
                     # code...
                     include(views_path('class-tab-test-edit'));
                     break;
+                case 'test-delete':
+                    # code...
+                    include(views_path('class-tab-test-delete'));
+                    break;
                 case 'lecturer-add':
                     # code...
                     include(views_path('class-tab-lacturers-add'));

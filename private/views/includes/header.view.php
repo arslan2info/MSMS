@@ -21,5 +21,9 @@
         .fa {
             margin-right: 4px;
         }
+
+        a {
+            text-decoration: none;
+        }
     </style>
     <div style="min-width: 350px;">

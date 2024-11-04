@@ -14,11 +14,7 @@
 
             </div>
         </form>
-        <?php if (Auth::access('lecturer')): ?>
-            <a href="<?= ROOT ?>/tests/add">
-                <button class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>Add New</button>
-            </a>
-        <?php endif; ?>
+
     </nav>
     <?php include(views_path('tests')) ?>
 </div>

@@ -51,11 +51,11 @@
         </ul>
 
         <ul class="navbar-nav ms-auto">
-            <li class="nav-item dropdown has-arrow">
+            <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <?= Auth::getFirst_name() ?>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="<?= ROOT ?>/profile">Profile</a>
                     <a class="dropdown-item" href="<?= ROOT ?>">Dashboard</a>
                     <div class="dropdown-divider"></div>

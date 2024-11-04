@@ -27,7 +27,7 @@
         <?php foreach ($tests as $row): ?>
             <tr>
                 <td>
-                    <a href="<?= ROOT ?>/single_class/<?= $row->class_id ?>">
+                    <a href="<?= ROOT ?>/single_test/<?= $row->test_id ?>">
                         <button class="btn btm-sm btn-primary"> <i class="fa fa-chevron-right"></i></button>
                     </a>
                 </td>
