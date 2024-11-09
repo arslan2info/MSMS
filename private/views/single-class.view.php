@@ -22,22 +22,34 @@
         <!-- <hr> -->
         <div>
             <ul class="nav nav-tabs">
+
+                <?php if (Auth::access("lecturer")): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $page_tab == 'lecturers' ? 'active' : '' ?>" href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=lecturers">Lecturers</a>
+                    </li>
+                <?php endif; ?>
+
                 <li class="nav-item">
-                    <a class="nav-link <?= $pag_tab == 'lecturers' ? 'active' : ''; ?> " href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=lecturers">Lecturers</a>
+                    <a class="nav-link <?= $page_tab == 'students' ? 'active' : '' ?>" href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=students">Students</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= $pag_tab == 'students' ? 'active' : ''; ?> " href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=students">Students</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= $pag_tab == 'tests' ? 'active' : ''; ?> " href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=tests">Tests</a>
-                </li>
+
+                <?php if (Auth::access("lecturer")): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $page_tab == 'tests' ? 'active' : '' ?>" href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=tests">Tests</a>
+                    </li>
+                <?php endif; ?>
+
             </ul>
 
             <?php
             switch ($page_tab) {
                 case 'lecturers':
                     # code...
-                    include(views_path('class-tab-lecturers'));
+                    if (Auth::access("lecturer")) {
+                        include(views_path('class-tab-lecturers'));
+                    } else {
+                        include(views_path('access-denied'));
+                    }
                     break;
                 case 'students':
                     # code...
@@ -45,11 +57,19 @@
                     break;
                 case 'tests':
                     # code...
-                    include(views_path('class-tab-tests'));
+                    if (Auth::access("lecturer")) {
+                        include(views_path('class-tab-tests'));
+                    } else {
+                        include(views_path('access-denied'));
+                    }
                     break;
                 case 'test-add':
                     # code...
-                    include(views_path('class-tab-test-add'));
+                    if (Auth::access("lecturer")) {
+                        include(views_path('class-tab-test-add'));
+                    } else {
+                        include(views_path('access-denied'));
+                    }
                     break;
                 case 'test-edit':
                     # code...
@@ -61,23 +81,35 @@
                     break;
                 case 'lecturer-add':
                     # code...
-                    include(views_path('class-tab-lacturers-add'));
+                    if (Auth::access("lecturer")) {
+                        include(views_path('class-tab-lacturers-add'));
+                    } else {
+                        include(views_path('access-denied'));
+                    }
                     break;
                 case 'lecturer-remove':
                     # code...
                     include(views_path('class-tab-lacturers-remove'));
                     break;
-                case 'students-add':
-                    # code...
-                    include(views_path('class-tab-students-add'));
-                    break;
                 case 'student-add':
+                    # code...
+                    if (Auth::access("lecturer")) {
+                        include(views_path('class-tab-students-add'));
+                    } else {
+                        include(views_path('access-denied'));
+                    }
+                    break;
+                case 'students-add':
                     # code...
                     include(views_path('class-tab-students-add'));
                     break;
                 case 'student-remove':
                     # code...
-                    include(views_path('class-tab-students-remove'));
+                    if (Auth::access("lecturer")) {
+                        include(views_path('class-tab-students-remove'));
+                    } else {
+                        include(views_path('access-denied'));
+                    }
                     break;
                 case 'tests-add':
                     # code...

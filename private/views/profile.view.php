@@ -69,6 +69,7 @@
                         </li>
                     <?php endif; ?>
                 </ul>
+
                 <?php
                 switch ($page_tab) {
                     case 'info':

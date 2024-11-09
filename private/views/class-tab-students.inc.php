@@ -7,13 +7,18 @@
             <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
         </div>
     </form>
+
     <div>
-        <a href="<?= ROOT ?>/single_class/studentadd/<?= $row->class_id ?>?select=true">
-            <button class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>Add New</button>
-        </a>
-        <a href="<?= ROOT ?>/single_class/studentremove/<?= $row->class_id ?>?select=true">
-            <button class="btn btn-sm btn-primary"><i class="fa fa-minus"></i>Remove</button>
-        </a>
+
+        <?php if (Auth::access('lecturer')): ?>
+            <a href="<?= ROOT ?>/single_class/studentadd/<?= $row->class_id ?>?select=true">
+                <button class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>Add New</button>
+            </a>
+            <a href="<?= ROOT ?>/single_class/studentremove/<?= $row->class_id ?>?select=true">
+                <button class="btn btn-sm btn-primary"><i class="fa fa-minus"></i>Remove</button>
+            </a>
+        <?php endif; ?>
+
     </div>
 </nav>
 

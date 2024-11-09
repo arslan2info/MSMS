@@ -11,28 +11,44 @@
 
             </th>
         </tr>
-        <?php if (isset($rows) && $rows): ?>
-            <?php foreach ($rows as $row): ?>
+        <?php if (isset($test_rows) && $test_rows): ?>
+
+            <?php foreach ($test_rows as $test_row): ?>
+
                 <tr>
                     <td>
-                        <a href="<?= ROOT ?>/single_test/<?= $row->test_id ?>">
-                            <button class="btn btm-sm btn-primary"> <i class="fa fa-chevron-right"></i></button>
-                        </a>
+                        <?php if (Auth::access('lecturer')): ?>
+                            <a href="<?= ROOT ?>/single_test/<?= $test_row->test_id ?>">
+                                <button class="btn btm-sm btn-primary"> <i class="fa fa-chevron-right"></i></button>
+                            </a>
+                        <?php endif; ?>
                     </td>
-                    <?php $active = $row->disabled == 1 ? "No" : "Yes"; ?>
-                    <td><?= $row->test ?></td>
-                    <td><?= $row->user->first_name ?> <?= $row->user->last_name ?></td>
+                    <?php $active = $test_row->disabled == 1 ? "No" : "Yes"; ?>
+                    <td><?= $test_row->test ?></td>
+                    <td><?= $test_row->user->first_name ?> <?= $test_row->user->last_name ?></td>
                     <td><?= $active ?></td>
-                    <td><?= get_date($row->date) ?></td>
+                    <td><?= get_date($test_row->date) ?></td>
+                    <td>
+                        <?php if (can_take_test($test_row->test_id)): ?>
+                            <a href="<?= ROOT ?>/take_test/<?= $test_row->test_id ?>">
+                                <button class="btn btn-sm btn-primary">Take this test</button>
+                            </a>
+                        <?php endif; ?>
+                    </td>
                 </tr>
+
             <?php endforeach; ?>
+
         <?php else: ?>
+
             <tr>
                 <td colspan="5">
                     <center>No tests were found at this time</center>
                 </td>
             </tr>
+
         <?php endif; ?>
+
     </table>
 
 </div>

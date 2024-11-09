@@ -18,14 +18,31 @@
                     <td> <?= esc(get_date($row->date)) ?> </td>
                     <td>
                         <a href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=tests">
-                            <button class="btn btn-primary"><i class="fa fa-plus"></i>Create Question</button>
+                            <button class="btn btn-primary"><i class="fa fa-chevron-right"></i> View Class</button>
                         </a>
                     </td>
                 </tr>
 
-                <?php $active = $row->disabled == 1 ? "No" : "Yes" ?>
+                <?php $active = $row->disabled ? "No" : "Yes" ?>
                 <tr>
-                    <td><b>Active:</b> <?= $active ?></td>
+                    <td>
+                        <b>Published:</b> <?= $active ?><br>
+
+                        <?PHP
+
+                        $btntext = 'Unpublish';
+                        $btncolor = "btn-primary";
+                        if ($row->disabled) {
+                            # code...
+                            $btntext = 'Publish';
+                            $btncolor = "btn-danger";
+                        }
+                        ?>
+
+                        <a href="<?= ROOT ?>/single_test/<?= $row->test_id ?>?disable=true">
+                            <button class="btn btn-sm <?= $btncolor ?>"><?= $btntext ?></button>
+                        </a>
+                    </td>
                     <td colspan="5"><b>Test Description:</b><br><?= esc($row->description) ?></td>
                 </tr>
             </table>

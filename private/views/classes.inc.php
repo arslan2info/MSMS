@@ -14,7 +14,7 @@
             <?php foreach ($rows as $row): ?>
                 <tr>
                     <td>
-                        <a href="<?= ROOT ?>/single_class/<?= esc($row->class_id) ?>">
+                        <a href="<?= ROOT ?>/single_class/<?= $row->class_id ?>?tab=students">
                             <button class="btn btm-sm btn-primary"> <i class="fa fa-chevron-right"></i></button>
                         </a>
                     </td>

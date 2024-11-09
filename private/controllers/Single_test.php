@@ -6,8 +6,8 @@ class Single_test extends Controller
     function index($id = '')
     {
         $errors = array();
-        if (!Auth::logged_in()) {
-            $this->redirect('login');
+        if (!Auth::access("lecturer")) {
+            $this->redirect('access_denied');
         }
 
         $tests = new Tests_model();
@@ -18,6 +18,20 @@ class Single_test extends Controller
 
         if ($row) {
             $crumbs[] = [$row->test, ""];
+        }
+
+        // disable
+        if (isset($_GET['disable'])) {
+
+            if ($row->disabled) {
+                # code...
+                $disable = 0;
+            } else {
+                # code...
+                $disable = 1;
+            }
+            $query = "UPDATE tests SET disabled = $disable WHERE id = :id LIMIT 1";
+            $tests->query($query, ['id' => $row->id]);
         }
 
         $page_tab = 'view';
@@ -71,6 +85,7 @@ class Single_test extends Controller
             # code...
             if ($quest->validate($_POST)) {
                 # code...
+                // for multiple choice
                 // check for files
                 if ($myimage =  upload_image($_FILES)) {
                     $_POST['image'] = $myimage;
@@ -78,6 +93,20 @@ class Single_test extends Controller
 
                 $_POST['test_id'] = $id;
                 $_POST['date'] = date("Y-m-d H:i:s");
+                if (isset($_GET["type"]) && $_GET["type"] == "multiple") {
+                    $_POST['question_type'] = "multiple";
+                    // for multiple choice
+                    $num = 0;
+                    $arr = [];
+                    $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                    foreach ($_POST as $key => $value) {
+                        if (strstr($key, 'choice')) {
+                            $arr[$letters[$num]] = $value;
+                            $num++;
+                        }
+                    }
+                    $_POST['choices'] = json_encode($arr);
+                } else 
                 if (isset($_GET["type"]) && $_GET["type"] == "objective") {
                     $_POST['question_type'] = "objective";
                 } else {
@@ -131,7 +160,10 @@ class Single_test extends Controller
 
         if (count($_POST) > 0) {
             # code...
-            if ($quest->validate($_POST)) {
+            if (!$row->editable == 0) {
+                $errors[] = "Editing for this test question is not disabled";
+            }
+            if ($quest->validate($_POST) && count($errors) == 0) {
                 # code...
                 // check for files
                 if ($myimage =  upload_image($_FILES)) {
@@ -142,6 +174,22 @@ class Single_test extends Controller
                 }
 
                 // check the question type
+                $type = '';
+                if (isset($_GET["type"]) && $_GET["type"] == "multiple") {
+                    $_POST['question_type'] = "multiple";
+                    // for multiple choice
+                    $num = 0;
+                    $arr = [];
+                    $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                    foreach ($_POST as $key => $value) {
+                        if (strstr($key, 'choice')) {
+                            $arr[$letters[$num]] = $value;
+                            $num++;
+                        }
+                    }
+                    $_POST['choices'] = json_encode($arr);
+                    $type = '?type=multiple';
+                } else 
                 if ($question->question_type == "objective") {
                     $type = '?type=objective';
                 }
@@ -149,7 +197,7 @@ class Single_test extends Controller
                 $quest->update($question->id, $_POST);
                 $this->redirect('single_test/editquestion/' . $id . "/" . $quest_id . $type);
             } else {
-                $errors = $quest->errors;
+                $errors = array_merge($errors, $quest->errors);
             }
         }
 
@@ -192,11 +240,14 @@ class Single_test extends Controller
         $quest = new Questions_model();
         $question = $quest->first("id", $quest_id);
 
-        if (count($_POST) > 0) {
+        if (!$row->editable == 0) {
+            $errors[] = "This test question cannot be deleted";
+        }
+
+        if (count($_POST) > 0 && count($errors) == 0) {
             # code...
             if (Auth::access('lecturer')) {
                 # code...
-
                 $quest->delete($question->id);
                 if (file_exists($question->image)) {
                     unlink($question->image);

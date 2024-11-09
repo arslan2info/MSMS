@@ -8,7 +8,7 @@
             <i class="fa fa-bars"></i>Add
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="<?= ROOT ?>/single_test/addquestion/<?= $row->test_id ?>">
+            <li><a class="dropdown-item" href="<?= ROOT ?>/single_test/addquestion/<?= $row->test_id ?>?type=multiple">
                     Add Multiple Choice Question </a></li>
             <li><a class="dropdown-item" href="<?= ROOT ?>/single_test/addquestion/<?= $row->test_id ?>?type=objective">
                     Add Objective Question</a></li>
@@ -48,15 +48,39 @@
                 ?>
                     <p class="card-text"><b>Answer:</b> <?= esc($question->correct_answer) ?></p>
                 <?php endif; ?>
+                <?php if ($question->question_type == "multiple"):
+                    $type = '?type=multiple';
+                ?>
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-header">
+                            Multiple Choice
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <?php $choices = json_decode($question->choices, true); ?>
+                            <?php foreach ($choices as $letter => $answer): ?>
+                                <li class="list-group-item"><?= $letter ?>: <?= $answer ?>
+                                    <?php if ($letter == $question->correct_answer): ?>
+                                        <i class="fa fa-check float-end"></i>
+                                </li>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <br>
+                    <p class="card-text"><b>Answer:</b> <?= esc($question->correct_answer) ?></p>
+                <?php endif; ?>
 
-                <p class="card-text float-end">
-                    <a href="<?= ROOT ?>/single_test/editquestion/<?= $row->test_id ?>/<?= $question->id ?><?= $type ?>">
-                        <button class="btn btn-info text-white pe-1"><i class="fa fa-edit"></i></button>
-                    </a>
-                    <a href="<?= ROOT ?>/single_test/deletequestion/<?= $row->test_id ?>/<?= $question->id ?><?= $type ?>">
-                        <button class="btn btn-danger text-white pe-1"><i class="fa fa-trash-alt"></i></button>
-                    </a>
-                </p>
+                <?php if ($row->editable == 0): ?>
+                    <p class="card-text float-end">
+                        <a href="<?= ROOT ?>/single_test/editquestion/<?= $row->test_id ?>/<?= $question->id ?><?= $type ?>">
+                            <button class="btn btn-info text-white pe-1"><i class="fa fa-edit"></i></button>
+                        </a>
+                        <a href="<?= ROOT ?>/single_test/deletequestion/<?= $row->test_id ?>/<?= $question->id ?><?= $type ?>">
+                            <button class="btn btn-danger text-white pe-1"><i class="fa fa-trash-alt"></i></button>
+                        </a>
+                    </p>
+                <?php endif; ?>
+
             </div>
 
         </div>

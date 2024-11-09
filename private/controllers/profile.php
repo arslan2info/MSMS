@@ -42,12 +42,48 @@ class Profile extends Controller
                     $data['student_classes'][] = $class->first('class_id', $arow->class_id);
                 }
             }
+        } else
+        if ($data['page_tab'] == 'tests' && $row) {
+
+            $class = new Classes_model();
+
+            $disabled = "disabled = 0 &&";
+            $mytable = "class_students";
+            if ($row->rank == 'lecturer') {
+                $mytable = "class_lecturers";
+                $disabled = "";
+                # code...
+            }
+            $query = "SELECT * FROM $mytable WHERE user_id = :user_id && disabled = 0";
+            $data['stud_classes'] = $class->query($query, ['user_id' => $id]);
+
+            $data['student_classes'] = array();
+            if ($data['stud_classes']) {
+                foreach ($data['stud_classes'] as $key => $arow) {
+                    # code...
+                    $data['student_classes'][] = $class->first('class_id', $arow->class_id);
+                }
+            }
+
+            // collect class id's
+            $class_ids = [];
+            foreach ($data['student_classes'] as $key => $class_row) {
+                # code...
+                $class_ids[] = $class_row->class_id;
+            }
+
+            $id_str = "'" . implode("','", $class_ids) . "'";
+            $query = "SELECT * FROM tests WHERE $disabled class_id IN ($id_str)";
+
+            $tests_model = new Tests_model();
+            $tests = $tests_model->query($query);
+            $data['test_rows'] = $tests;
         }
 
         $data['row'] = $row;
         $data['crumbs'] = $crumbs;
 
-        if (Auth::access('admin') || (Auth::access('reception') && $row->rank == "student")) {
+        if (Auth::access('reception') || Auth::i_own_content($row)) {
             $this->view('profile', $data);
         } else {
             $this->view('access-denied');
